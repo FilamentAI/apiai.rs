@@ -1,0 +1,13 @@
+[package]
+name = "apiai"
+version = "0.1.0"
+authors = ["James Ravenscroft <james.ravenscroft@filament.uk.com>"]
+
+[build-dependencies]
+serde_codegen = "0.8"
+
+[dependencies]
+hyper = "0.9.14"
+serde = "0.8.20"
+serde_json = "0.8.4"
+serde_derive = "0.8"
