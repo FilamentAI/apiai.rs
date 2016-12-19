@@ -1,0 +1,8 @@
+language: rust
+rust:
+#  - stable will be added back in when custom attributes 'harden'
+#  - beta
+  - nightly
+matrix:
+  allow_failures:
+    - rust: nightly
