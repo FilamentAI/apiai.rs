@@ -5,7 +5,7 @@
 extern crate serde_derive;
 
 #[cfg(test)]
-mod serialization_tests;
+mod test;
 
 extern crate serde;
 pub mod apiai;
