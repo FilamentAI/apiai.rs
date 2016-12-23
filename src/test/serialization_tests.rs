@@ -9,7 +9,7 @@ extern crate serde_json;
 * Simple test to make sure that languages serialize predictably into JSON strings
 */
 #[test]
-fn test_language_json_serialization() {
+fn test_serialize_language_json() {
 
    let english = Language::English;
 
@@ -29,7 +29,7 @@ struct LangObject{
 *
 */
 #[test]
-fn test_language_json_deserialization() {
+fn test_deserialize_language() {
 
    let en_str : &'static str = "{\"lang\":\"en\"}";
 
@@ -43,7 +43,7 @@ fn test_language_json_deserialization() {
 *
 */
 #[test]
-fn test_apiquery_query_json_serialization() {
+fn test_serialize_apiquery_query_json() {
     let q = ApiQuery::Query(String::from("hello moto"));
     let query_string = "{\"query\":\"hello moto\"}";
 
@@ -55,7 +55,7 @@ fn test_apiquery_query_json_serialization() {
 *
 */
 #[test]
-fn test_apiquery_event_no_args_json_serialization() {
+fn test_serialize_apiquery_event_no_args() {
     let e = ApiQuery::Event(ApiEvent{name: String::from("Welcome"), data: Option::None});
     let event_string = "{\"event\":{\"name\":\"Welcome\",\"data\":null}}";
 
@@ -67,7 +67,7 @@ fn test_apiquery_event_no_args_json_serialization() {
 *
 */
 #[test]
-fn test_apiquery_event_with_args_json_serialization() {
+fn test_serialize_apiquery_event_with_args_json() {
     let mut data = HashMap::new();
     data.insert(String::from("client"), String::from("Slack"));
 
@@ -88,7 +88,7 @@ fn test_apiquery_event_with_args_json_serialization() {
 *
 */
 #[test]
-fn test_apiquery_event_with_args_json_deserialization() {
+fn test_deserialize_apiquery_event_with_args() {
 
     let event_string = "{\"event\":{\"name\":\"Welcome\",\"data\":{\"client\":\"Slack\"}}}";
 
@@ -111,7 +111,7 @@ fn test_apiquery_event_with_args_json_deserialization() {
 *
 */
 #[test]
-fn test_apiquery_event_without_args_json_deserialization() {
+fn test_deserialize_apiquery_event_without_args() {
 
     let event_string = "{\"event\":{\"name\":\"Welcome\"}}";
 
