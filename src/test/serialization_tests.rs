@@ -35,7 +35,7 @@ fn test_deserialize_language() {
 
    let langmap : LangObject = serde_json::from_str(en_str).unwrap();
 
-   assert!(langmap.lang == Language::English);
+   assert_eq!(langmap.lang, Language::English);
 }
 
 /**
@@ -43,11 +43,11 @@ fn test_deserialize_language() {
 *
 */
 #[test]
-fn test_serialize_apiquery_query_json() {
-    let q = ApiQuery::Query(String::from("hello moto"));
-    let query_string = "{\"query\":\"hello moto\"}";
+fn test_serialize_apiquery_json() {
+    let q = ApiQuery(String::from("hello moto"));
+    let query_string = "\"hello moto\"";
 
-    assert!(String::from(query_string) == serde_json::to_string(&q).unwrap());
+    assert_eq!(String::from(query_string), serde_json::to_string(&q).unwrap());
 }
 
 /**
@@ -55,11 +55,11 @@ fn test_serialize_apiquery_query_json() {
 *
 */
 #[test]
-fn test_serialize_apiquery_event_no_args() {
-    let e = ApiQuery::Event(ApiEvent{name: String::from("Welcome"), data: Option::None});
-    let event_string = "{\"event\":{\"name\":\"Welcome\",\"data\":null}}";
+fn test_serialize_event_no_args() {
+    let e = ApiEvent{name: String::from("Welcome"), data: Option::None};
+    let event_string = "{\"name\":\"Welcome\",\"data\":null}";
 
-    assert!(String::from(event_string) == serde_json::to_string(&e).unwrap());
+    assert_eq!(String::from(event_string),serde_json::to_string(&e).unwrap());
 }
 
 /**
@@ -67,19 +67,19 @@ fn test_serialize_apiquery_event_no_args() {
 *
 */
 #[test]
-fn test_serialize_apiquery_event_with_args_json() {
+fn test_serialize_event_with_args_json() {
     let mut data = HashMap::new();
     data.insert(String::from("client"), String::from("Slack"));
 
-    let e = ApiQuery::Event(ApiEvent{
+    let e = ApiEvent{
         name: String::from("Welcome"),
         data: Option::Some(data)
-    });
+    };
 
-    let event_string = "{\"event\":{\"name\":\"Welcome\",\"data\":{\"client\":\"Slack\"}}}";
+    let event_string = "{\"name\":\"Welcome\",\"data\":{\"client\":\"Slack\"}}";
 
 
-    assert!(String::from(event_string) == serde_json::to_string(&e).unwrap());
+    assert_eq!(String::from(event_string), serde_json::to_string(&e).unwrap());
 }
 
 
@@ -90,20 +90,13 @@ fn test_serialize_apiquery_event_with_args_json() {
 #[test]
 fn test_deserialize_apiquery_event_with_args() {
 
-    let event_string = "{\"event\":{\"name\":\"Welcome\",\"data\":{\"client\":\"Slack\"}}}";
+    let event_string = "{\"name\":\"Welcome\",\"data\":{\"client\":\"Slack\"}}";
 
-    let query : ApiQuery = serde_json::from_str(event_string).unwrap();
+    let evt : ApiEvent = serde_json::from_str(event_string).unwrap();
 
-    match query {
-        ApiQuery::Event(evt) => {
+    assert_eq!(evt.name, String::from("Welcome"));
 
-            assert!(evt.name == String::from("Welcome"));
-
-            assert!(evt.data.unwrap().get("client").unwrap() == "Slack");
-
-        }
-        _ => panic!("Expected to find event, not query or anything else")
-    }
+    assert_eq!(evt.data.unwrap().get("client").unwrap(), "Slack");
 }
 
 /**
@@ -113,20 +106,15 @@ fn test_deserialize_apiquery_event_with_args() {
 #[test]
 fn test_deserialize_apiquery_event_without_args() {
 
-    let event_string = "{\"event\":{\"name\":\"Welcome\"}}";
+    let event_string = "{\"name\":\"Welcome\"}";
 
-    let query : ApiQuery = serde_json::from_str(event_string).unwrap();
+    let evt : ApiEvent = serde_json::from_str(event_string).unwrap();
 
-    match query {
-        ApiQuery::Event(evt) => {
+    assert_eq!(evt.name, String::from("Welcome"));
 
-            assert!(evt.name == String::from("Welcome"));
+    assert!(evt.data.is_none());
 
-            assert!(evt.data.is_none());
 
-        }
-        _ => panic!("Expected to find event, not query or anything else")
-    }
 }
 
 /**
@@ -136,18 +124,11 @@ fn test_deserialize_apiquery_event_without_args() {
 #[test]
 fn test_deserialize_apiquery_query() {
 
-    let query_string = "{\"query\":\"hello moto\"}";
+    let query_string = "\"hello moto\"";
 
     let query : ApiQuery = serde_json::from_str(query_string).unwrap();
 
-    match query {
-        ApiQuery::Query(q) => {
-
-            assert!(q == String::from("hello moto"));
-
-        }
-        _ => panic!("Expected to find event, not query or anything else")
-    }
+    assert!(query.0 == String::from("hello moto"));
 }
 
 
@@ -160,13 +141,14 @@ fn test_serialize_apirequest_query(){
 
     let query_string = r#"{"query":"hello moto","sessionId":"12345","lang":"en","contexts":[]}"#;
 
-    let q = ApiQuery::Query(String::from("hello moto"));
+    let q = ApiQuery(String::from("hello moto"));
 
     let req = ApiRequest{
-        query:q,
+        query: Option::Some(q),
         session_id: String::from("12345"),
         lang: Language::English,
-        contexts: Vec::new()
+        contexts: Vec::new(),
+        ..Default::default()
     };
 
     assert_eq!(query_string, serde_json::to_string(&req).unwrap());
@@ -182,17 +164,55 @@ fn test_serialize_apirequest_event_no_data(){
 
     let query_string = r#"{"event":{"name":"Welcome","data":null},"sessionId":"12345","lang":"en","contexts":[]}"#;
 
-    let e = ApiQuery::Event(ApiEvent{
+    let e = ApiEvent{
         name: String::from("Welcome"),
         data: Option::None
-    });
+    };
 
     let req = ApiRequest{
-        query:e,
+        event: Option::Some(e),
         session_id: String::from("12345"),
         lang: Language::English,
-        contexts: Vec::new()
+        contexts: Vec::new(),
+        ..Default::default()
     };
 
     assert_eq!(query_string, serde_json::to_string(&req).unwrap());
+}
+
+
+/**
+* Test that deserializing an event with no args works as expected
+*
+*/
+#[test]
+fn test_deserialize_apirequest_event_no_data(){
+
+    let query_string = r#"{"event":{"name":"Welcome","data":null},"sessionId":"12345","lang":"en","contexts":[]}"#;
+
+    let req : ApiRequest = serde_json::from_str(query_string).unwrap();
+
+    let event = req.event.unwrap();
+
+    assert_eq!(event.name, "Welcome");
+    assert!(event.data.is_none());
+}
+
+/**
+* Test that deserializing an event with some data args works as expected
+*
+*/
+#[test]
+fn test_deserialize_apirequest_event_with_data(){
+
+    let query_string = r#"{"event":{"name":"Welcome","data":{"test":"arg1"}},"sessionId":"12345","lang":"en","contexts":[]}"#;
+
+    let req : ApiRequest = serde_json::from_str(query_string).unwrap();
+
+    let event = req.event.unwrap();
+
+    assert_eq!(event.name, "Welcome");
+    let data = event.data.unwrap();
+
+    assert_eq!(data.get("test").unwrap(), "arg1");
 }

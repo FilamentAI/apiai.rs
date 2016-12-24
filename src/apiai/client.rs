@@ -2,8 +2,6 @@ use apiai::lang::Language;
 
 use std::collections::HashMap;
 
-use serde::{Serialize,Serializer};
-
 pub struct ApiAIClient{
     version: String,
     access_token: String,
@@ -60,50 +58,18 @@ pub struct ApiEvent{
 }
 
 #[derive(Serialize,Deserialize)]
-pub enum ApiQuery{
-    #[serde(rename = "query")]
-    Query(String),
-    #[serde(rename = "event")]
-    Event(ApiEvent)
-}
+pub struct ApiQuery(pub String);
 
-#[derive(Deserialize)]
+
+
+#[derive(Serialize,Deserialize,Default)]
 pub struct ApiRequest{
-    pub query: ApiQuery,
+    #[serde(skip_serializing_if="Option::is_none",default)]
+    pub query: Option<ApiQuery>,
+    #[serde(skip_serializing_if="Option::is_none",default)]
+    pub event: Option<ApiEvent>,
+    #[serde( rename = "sessionId") ]
     pub session_id: String,
     pub lang: Language,
     pub contexts: Vec<ApiContext>
-}
-
-
-impl Serialize for ApiRequest {
-    fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
-    where S: Serializer {
-
-
-        let mut state = try!(serializer.serialize_struct("",4));
-
-        match self.query {
-            // if query then serialize only the string value
-            ApiQuery::Query(ref x) => {
-                try!(serializer.serialize_struct_elt(&mut state, "query", x));
-            }
-
-            ApiQuery::Event(ref evt) =>  {
-                try!(serializer.serialize_struct_elt(&mut state, "event", evt));
-            }
-        }
-
-        // serialize session id
-        try!(serializer.serialize_struct_elt(&mut state, "sessionId", &self.session_id));
-
-        //serialize language
-        try!(serializer.serialize_struct_elt(&mut state, "lang", &self.lang));
-
-        //serialize contexts if any
-        try!(serializer.serialize_struct_elt(&mut state, "contexts", &self.contexts));
-
-        serializer.serialize_struct_end(state)
-
-    }
 }

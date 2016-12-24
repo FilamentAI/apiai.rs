@@ -1,6 +1,8 @@
 use serde::ser::{Serialize, Serializer};
 use serde::de::{Visitor,Deserialize, Deserializer, Error};
 
+use std::fmt;
+
 /**
 * Enum defines API.ai supported languages and their text values used on the server
 *
@@ -95,6 +97,16 @@ impl Serialize for Language{
     fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
     where S: Serializer {
         serializer.serialize_str(self.value())
+    }
+}
+
+impl Default for Language {
+    fn default() -> Language { Language::English }
+}
+
+impl fmt::Debug for Language {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.value())
     }
 }
 
