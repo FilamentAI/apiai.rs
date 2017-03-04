@@ -7,8 +7,9 @@ authors = ["James Ravenscroft <james.ravenscroft@filament.uk.com>"]
 serde_codegen = "0.8"
 
 [dependencies]
-hyper = "0.9.14"
-serde = "0.8.20"
-serde_json = "0.8.4"
-serde_derive = "0.8"
-uuid = { version = "0.3.1", features = ["serde", "v4"] } 
+hyper = "0.10.5"
+serde = "0.9.10"
+serde_json = "0.9.8"
+serde_derive = "0.9.10"
+uuid = { version = "0.4.0", features = ["serde", "v4"] }
+chrono = { version = "0.3.0", features = ["serde"] }

@@ -1,7 +1,7 @@
 use apiai::lang::Language;
 use std::collections::HashMap;
 use std::option::Option;
-use apiai::client::{ApiQuery, ApiRequest, ApiEvent};
+use apiai::client::{ApiQuery, ApiRequest, ApiEvent, ApiMessage};
 
 extern crate serde_json;
 
@@ -215,4 +215,31 @@ fn test_deserialize_apirequest_event_with_data(){
     let data = event.data.unwrap();
 
     assert_eq!(data.get("test").unwrap(), "arg1");
+}
+
+
+/**
+* Test that we are able to serialize a simple text apimessage
+*
+*/
+#[test]
+fn test_serialize_apimessage_text(){
+
+    let apimessage = ApiMessage::Text(String::from("Hello"));
+
+    let msg_string = r#"{"type":0,"speech":"Hello"}"#;
+
+    assert_eq!(msg_string, serde_json::to_string(&apimessage).unwrap());
+}
+
+/**
+* Test that we are able to deserialize the example text request json from the api.ai website.
+*
+*/
+#[test]
+fn test_deserialize_apimessage_text(){
+    
+    let msg_string = r#"{"type":0,"speech":"Hello"}"#;
+
+
 }

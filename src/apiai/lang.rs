@@ -56,12 +56,18 @@ impl Language{
 
 }
 
+#[derive(Debug)]
 struct LanguageVisitor;
+
 
 impl Visitor for LanguageVisitor {
     type Value = Language;
 
-    fn visit_str<E>(&mut self, value: &str) -> Result<Language, E>
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("an integer between -2^31 and 2^31")
+    }
+
+    fn visit_str<E>(self, value: &str) -> Result<Language, E>
         where E: Error
     {
         match value {
@@ -80,11 +86,11 @@ impl Visitor for LanguageVisitor {
             "ru" => Ok(Language::Russian),
             "es" => Ok(Language::Spanish),
             "uk" => Ok(Language::Ukranian),
-             _ => Err(E::invalid_value(format!("Language {} was not a supported string.", value).as_str()  ))
+             _ => Err(E::custom(format!("Language {} was not a supported string.", value).as_str()  ))
         }
     }
 
-    fn visit_string<E>(&mut self, value: String) -> Result<Language, E>
+    fn visit_string<E>(self, value: String) -> Result<Language, E>
         where E: Error
     {
         self.visit_str(value.as_str())
@@ -94,7 +100,7 @@ impl Visitor for LanguageVisitor {
 
 // JSON value representation
 impl Serialize for Language{
-    fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where S: Serializer {
         serializer.serialize_str(self.value())
     }
@@ -111,7 +117,7 @@ impl fmt::Debug for Language {
 }
 
 impl Deserialize for Language {
-    fn deserialize<D>(deserializer: &mut D) -> Result<Language, D::Error>
+    fn deserialize<D>(deserializer: D) -> Result<Language, D::Error>
         where D: Deserializer
     {
         deserializer.deserialize_str(LanguageVisitor)
