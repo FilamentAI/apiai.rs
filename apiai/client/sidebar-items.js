@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ApiError","Error message return from API.ai"]],"static":[["DEFAULT_BASE_URL",""],["DEFAULT_VERSION",""]],"struct":[["ApiAIClient","ApiAIClient is used to coordinate calls to the API.ai REST services."]]});
