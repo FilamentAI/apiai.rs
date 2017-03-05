@@ -45,4 +45,4 @@ println!("{}", response.result.fulfillment.speech);
 
 ```
 
-For more information see the examples/botcmd directory.    
+For more information see the [botcmd example](/tree/master/examples/botcmd).    
