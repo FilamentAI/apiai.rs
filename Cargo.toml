@@ -10,7 +10,7 @@ description = "API.ai client library written in pure rust"
 # These URLs point to more information about the repository. These are
 # intended to be webviews of the relevant data, not necessarily compatible
 # with VCS tools and the like.
-#documentation = "..."
+documentation = "https://filamentai.github.io/apiai.rs/apiai/index.html"
 #homepage = "..."
 repository = "https://github.com/ravenscroftj/apiai.rs"
 
