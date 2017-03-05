@@ -8,6 +8,7 @@ serde_codegen = "0.8"
 
 [dependencies]
 hyper = "0.10.5"
+hyper-native-tls = "0.2.2"
 serde = "0.9.10"
 serde_json = "0.9.8"
 serde_derive = "0.9.10"

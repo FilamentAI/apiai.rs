@@ -2,7 +2,6 @@ use apiai::lang::Language;
 use std::collections::HashMap;
 use std::option::Option;
 use apiai::client::{
-    ApiQuery,
     ApiRequest,
     ApiEvent,
     ApiResponse,
@@ -13,8 +12,7 @@ use apiai::client::{
     ApiMessage
 };
 
-
-extern crate serde_json;
+use serde_json;
 
 /**
 * Simple test to make sure that languages serialize predictably into JSON strings
@@ -47,18 +45,6 @@ fn test_deserialize_language() {
    let langmap : LangObject = serde_json::from_str(en_str).unwrap();
 
    assert_eq!(langmap.lang, Language::English);
-}
-
-/**
-* Test that creating an Api Query object works as expected
-*
-*/
-#[test]
-fn test_serialize_apiquery_json() {
-    let q = ApiQuery(String::from("hello moto"));
-    let query_string = "\"hello moto\"";
-
-    assert_eq!(String::from(query_string), serde_json::to_string(&q).unwrap());
 }
 
 /**
@@ -128,20 +114,6 @@ fn test_deserialize_apiquery_event_without_args() {
 
 }
 
-/**
-* Test that  deserializing an event with no args works as expected
-*
-*/
-#[test]
-fn test_deserialize_apiquery_query() {
-
-    let query_string = "\"hello moto\"";
-
-    let query : ApiQuery = serde_json::from_str(query_string).unwrap();
-
-    assert!(query.0 == String::from("hello moto"));
-}
-
 
 /**
 * Test that deserializing an event with no args works as expected
@@ -152,10 +124,8 @@ fn test_serialize_apirequest_query(){
 
     let query_string = r#"{"query":"hello moto","sessionId":"12345","lang":"en","contexts":[]}"#;
 
-    let q = ApiQuery(String::from("hello moto"));
-
     let req = ApiRequest{
-        query: Option::Some(q),
+        query: Option::Some(String::from("hello moto")),
         session_id: String::from("12345"),
         lang: Language::English,
         contexts: Vec::new(),
@@ -323,14 +293,14 @@ fn test_serialize_api_response(){
 
     let fulfillment = ApiFulfillment {
         speech: String::from("Hi Sam! Nice to meet you!"),
-        messages: vec!(msg)
+        messages: Option::Some(vec!(msg))
     };
 
     let metadata = ApiMetadata{
-        intent_id: String::from("9f41ef7c-82fa-42a7-9a30-49a93e2c14d0"),
+        intent_id: Option::Some(String::from("9f41ef7c-82fa-42a7-9a30-49a93e2c14d0")),
         webhook_used: String::from("false"),
         webhook_slotfilling_used: String::from("false"),
-        intent_name: String::from("greetings")
+        intent_name: Option::Some(String::from("greetings"))
     };
 
     let result = ApiResult{

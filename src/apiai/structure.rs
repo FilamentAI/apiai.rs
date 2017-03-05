@@ -9,6 +9,7 @@ use std::collections::HashMap;
 pub struct ApiResponse {
     pub id : String,
     pub timestamp : String,
+    #[serde(default="Language::default")]
     pub lang : Language,
     pub result: ApiResult,
 
@@ -27,6 +28,7 @@ pub struct ApiResponse {
     pub session_id : String
 
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 #[derive(Serialize,Deserialize)]
@@ -54,7 +56,7 @@ pub struct ApiResult {
     * values have been collected `false` if all required parameter values have been collected
     * or if the triggered intent doesn't containt any required parameters.
     */
-    #[serde( rename = "actionIncomplete") ]
+    #[serde( rename = "actionIncomplete", default="default_bool") ]
     pub action_incomplete : bool,
     /**
     * A map of parameters associated with this result
@@ -63,6 +65,7 @@ pub struct ApiResult {
     /**
     * Vector of contexts provided by the current conversation
     */
+    #[serde(default="Vec::default")]
     pub contexts : Vec<ApiContext>,
 
     /**
@@ -83,6 +86,9 @@ pub struct ApiResult {
 
 
 }
+
+fn default_bool() -> bool {false}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 #[derive(Serialize,Deserialize)]
 pub struct ApiStatus{
@@ -99,14 +105,16 @@ pub struct ApiStatus{
 #[derive(Serialize,Deserialize)]
 pub struct ApiMetadata{
     #[serde( rename = "intentId") ]
-    pub intent_id: String,
-    #[serde( rename = "webhookUsed") ]
+    pub intent_id: Option<String>,
+    #[serde( rename = "webhookUsed", default="default_false_string") ]
     pub webhook_used: String,
-    #[serde( rename = "webhookForSlotFillingUsed") ]
+    #[serde( rename = "webhookForSlotFillingUsed", default="default_false_string") ]
     pub webhook_slotfilling_used: String,
-    #[serde( rename = "intentName") ]
-    pub intent_name: String,
+    #[serde( rename = "intentName", skip_serializing_if = "Option::is_none") ]
+    pub intent_name: Option<String>,
 }
+
+fn default_false_string() -> String{ String::from("false") }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -124,7 +132,8 @@ pub struct ApiFulfillment{
     * Represents an array of message objects as described in ApiMessage
     *
     */
-    pub messages: Vec<ApiMessage>
+    #[serde(skip_serializing_if = "Option::is_none") ]
+    pub messages: Option<Vec<ApiMessage>>
 }
 
 
@@ -154,27 +163,22 @@ pub struct ApiEvent{
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
-*  An ApiQuery is a simple string newtype that holds the query payload for api.ai requests.
-*
-* The [api.ai documentation](https://docs.api.ai/docs/query) defines a query as the natural
-* language to be processed that may be up to 256 characters in length.
-*/
-#[derive(Serialize,Deserialize)]
-pub struct ApiQuery(pub String);
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
 * ApiRequest is a structure that encapsulates an api.ai request object
 *
 */
 #[derive(Serialize,Deserialize)]
 pub struct ApiRequest{
+    /**
+    *  queryis a simple string that holds the query payload for api.ai requests.
+    *
+    * The [api.ai documentation](https://docs.api.ai/docs/query) defines a query as the natural
+    * language to be processed that may be up to 256 characters in length.
+    */
     #[serde(skip_serializing_if="Option::is_none",default)]
-    pub query: Option<ApiQuery>,
+    pub query: Option<String>,
     #[serde(skip_serializing_if="Option::is_none",default)]
     pub event: Option<ApiEvent>,
-    #[serde( rename = "sessionId") ]
+    #[serde( rename = "sessionId", skip_serializing_if="String::is_empty", default) ]
     pub session_id: String,
     pub lang: Language,
     pub contexts: Vec<ApiContext>
