@@ -52,4 +52,4 @@ chrono = { version = "0.3.0", features = ["serde"] }
 # specified using the following parameters:
 [badges]
 # Travis CI: `repository` is required. `branch` is optional; default is `master`
-travis-ci = { repository = "https://travis-ci.org/ravenscroftj/apiai.rs", branch = "master" }
+travis-ci = { repository = "FilamentAI/apiai.rs", branch = "master" }
