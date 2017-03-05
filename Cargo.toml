@@ -2,20 +2,6 @@
 name = "apiai"
 version = "0.1.0"
 authors = ["James Ravenscroft <james.ravenscroft@filament.uk.com>"]
-
-[build-dependencies]
-serde_codegen = "0.8"
-
-[dependencies]
-hyper = "0.10.5"
-hyper-native-tls = "0.2.2"
-serde = "0.9.10"
-serde_json = "0.9.8"
-serde_derive = "0.9.10"
-uuid = { version = "0.4.0", features = ["serde", "v4"] }
-chrono = { version = "0.3.0", features = ["serde"] }
-
-[package]
 # ...
 
 # A short blurb about the package. This is not rendered in any format when
@@ -49,6 +35,17 @@ categories = ["web-programming::http-client", "network-programming"]
 # separated with a `/`.
 license = "Apache-2.0"
 
+[build-dependencies]
+serde_codegen = "0.8"
+
+[dependencies]
+hyper = "0.10.5"
+hyper-native-tls = "0.2.2"
+serde = "0.9.10"
+serde_json = "0.9.8"
+serde_derive = "0.9.10"
+uuid = { version = "0.4.0", features = ["serde", "v4"] }
+chrono = { version = "0.3.0", features = ["serde"] }
 
 # Optional specification of badges to be displayed on crates.io. The badges
 # currently available are Travis CI, Appveyor, and GitLab latest build status,
