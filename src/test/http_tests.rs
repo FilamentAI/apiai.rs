@@ -1,5 +1,4 @@
 use client::{ApiAIClient,ApiRequest};
-use lang::Language;
 
 #[test]
 fn test_send_api_query() {
@@ -13,9 +12,6 @@ fn test_send_api_query() {
 
     let req = ApiRequest{
         query: Option::Some(String::from("Hello!")),
-        session_id: String::from("1234"),
-        lang: Language::English,
-        contexts: Vec::new(),
         ..Default::default()
     };
 

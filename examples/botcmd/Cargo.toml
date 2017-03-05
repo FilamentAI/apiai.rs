@@ -1,0 +1,7 @@
+[package]
+name = "apidemo"
+version = "0.1.0"
+authors = ["James Ravenscroft <james.ravenscroft@filament.uk.com>"]
+
+[dependencies.apiai]
+path = "../../"
