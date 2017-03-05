@@ -1,5 +1,5 @@
-use apiai::client::{ApiAIClient,ApiRequest};
-use apiai::lang::Language;
+use client::{ApiAIClient,ApiRequest};
+use lang::Language;
 
 #[test]
 fn test_send_api_query() {

@@ -1,5 +1,5 @@
 // Import all data structures and re-export from api client.
-pub use apiai::structure::{
+pub use structure::{
         ApiRequest,
         ApiEvent,
         ApiResponse,

@@ -1,5 +1,5 @@
 use uuid::Uuid;
-use apiai::lang::Language;
+use lang::Language;
 use std::collections::HashMap;
 
 /**

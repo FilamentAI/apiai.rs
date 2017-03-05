@@ -1,7 +1,8 @@
-use apiai::lang::Language;
 use std::collections::HashMap;
 use std::option::Option;
-use apiai::client::{
+
+use lang::Language;
+use client::{
     ApiRequest,
     ApiEvent,
     ApiResponse,

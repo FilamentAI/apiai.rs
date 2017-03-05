@@ -12,4 +12,6 @@ extern crate hyper_native_tls;
 mod test;
 
 
-pub mod apiai;
+pub mod lang;
+pub mod client;
+pub mod structure;
