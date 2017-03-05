@@ -101,7 +101,7 @@ fn map_serde_to_api_err(err : serde_json::Error) -> ApiError {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
-* Error message return from API.asi
+* Error message return from API.ai
 */
 #[derive(Debug)]
 pub enum ApiError{
