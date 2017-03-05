@@ -31,6 +31,10 @@ pub struct ApiResponse {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+* Result object encapsulates API result including actions, intent name (if applicable) etc.
+*
+*/
 #[derive(Serialize,Deserialize)]
 pub struct ApiResult {
 
@@ -90,6 +94,10 @@ pub struct ApiResult {
 fn default_bool() -> bool {false}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+* API Status encapsulates the api http status - usually 200 if all is well
+*
+*/
 #[derive(Serialize,Deserialize)]
 pub struct ApiStatus{
     pub code: i32,
@@ -101,6 +109,7 @@ pub struct ApiStatus{
 
 /**
 * API.ai metadata struct
+*
 */
 #[derive(Serialize,Deserialize)]
 pub struct ApiMetadata{
