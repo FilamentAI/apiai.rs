@@ -1,6 +1,6 @@
 [package]
 name = "apiai"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["James Ravenscroft <james.ravenscroft@filament.uk.com>"]
 
 # A short blurb about the package. This is not rendered in any format when

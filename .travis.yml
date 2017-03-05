@@ -1,8 +1,17 @@
 language: rust
 rust:
-#  - stable will be added back in when custom attributes 'harden'
-#  - beta
-  - nightly
+- nightly
 matrix:
   allow_failures:
-    - rust: nightly
+  - rust: nightly
+after_success: |
+  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  cargo doc &&
+  echo "<meta http-equiv=refresh content=0;url=`echo $TRAVIS_REPO_SLUG | cut -d '/' -f 2`/index.html>" > target/doc/index.html &&
+  sudo pip install ghp-import &&
+  ghp-import -n target/doc &&
+  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
+env:
+  global:
+    secure: O02vUgRJ8qI/wD0m7awSSZEEmt+XwRvKjn97dXG4EswxbH57qKY5soGU3dnbSUDsTYgAweMvs+nLTqsORTwJGTo0Rh4Z0aNuWbIRuONvyW4Unem8fzZx+jtPIuVuvQYImNddNl/jiXukJCl2xXRV7Ph1p5QkHYSAUHc7kxFddbYr1iddPZYls2vYsSR1XU1C0tKhwOK1D4oyCofeKPCpK0uOP2Y9zHU+dtV57WGEIC8zpb3gPK1i4w6p1WXPsukiP2haxSvtDJJay46yTQtkJ4Xxs2WpAm7mfvd3pLBgDCL2wHjVX1uOl5EbhUmFZ/OT8zEYmvj71KkvwFkxOtMYLBbeoX4mxVjaj1CNAKnQpF4bZdp9JcbM1ICc3b00JgoRo94wwR+ZuJ0W/VE9+z2mPa5db7J7xKRtkROZzs5aeFcOXjE4fDkYoiLaXbihyukSUrjKZPzsNjZFvyfqY/2U6tfHVnIxgzdijJDX1MWNzptWezWVadH9nlootyJHNIIxr7sDDx3m6HBCs+ISnUYGl9N0PeolmtsU1SYqLeVdPbKcQlSBpPUtPK78XcsnUi8LmEP1f6C3TTYZfQ06rhXkSQz/5zAcXjnkOw93GOktcpJgwvvY9wQKpvNy1JNzzkJRqsIlYIq/PcjqYKEcTguSmpSWiwSwKo8W2x/rs4DEGf4=

@@ -14,7 +14,7 @@ Add the following to your Cargo.toml:
 
 ```
 [dependencies]
-apiai = 0.1.0
+apiai = 0.1.1
 ```
 
 Then import and use the crate in your module:
