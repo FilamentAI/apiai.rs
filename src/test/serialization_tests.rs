@@ -1,7 +1,18 @@
 use apiai::lang::Language;
 use std::collections::HashMap;
 use std::option::Option;
-use apiai::client::{ApiQuery, ApiRequest, ApiEvent, ApiMessage};
+use apiai::client::{
+    ApiQuery,
+    ApiRequest,
+    ApiEvent,
+    ApiResponse,
+    ApiFulfillment,
+    ApiStatus,
+    ApiMetadata,
+    ApiResult,
+    ApiMessage
+};
+
 
 extern crate serde_json;
 
@@ -225,9 +236,9 @@ fn test_deserialize_apirequest_event_with_data(){
 #[test]
 fn test_serialize_apimessage_text(){
 
-    let apimessage = ApiMessage::Text(String::from("Hello"));
+    let apimessage = ApiMessage::new_text(String::from("Hello"));
 
-    let msg_string = r#"{"type":0,"speech":"Hello"}"#;
+    let msg_string = r#"{"speech":"Hello","type":0}"#;
 
     assert_eq!(msg_string, serde_json::to_string(&apimessage).unwrap());
 }
@@ -238,8 +249,113 @@ fn test_serialize_apimessage_text(){
 */
 #[test]
 fn test_deserialize_apimessage_text(){
-    
+
     let msg_string = r#"{"type":0,"speech":"Hello"}"#;
+    let msg : ApiMessage = serde_json::from_str(&msg_string).unwrap();
+
+    match msg {
+        ApiMessage::Text{speech, message_type} => {
+            assert_eq!(speech, String::from("Hello"));
+            assert_eq!(message_type, 0);
+        },
+
+        _ => panic!("Type is suppsed to be text")
+    };
+
+}
+
+#[test]
+fn test_deserialize_api_response(){
+    let json_string = r#"{
+  "id": "b340a1f7-abee-4e13-9bdd-5e8938a48b7d",
+  "timestamp": "2017-02-09T15:38:26.548Z",
+  "lang": "en",
+  "result": {
+    "source": "agent",
+    "resolvedQuery": "my name is Sam and I live in Paris",
+    "action": "greetings",
+    "actionIncomplete": false,
+    "parameters": {},
+    "contexts": [],
+    "metadata": {
+      "intentId": "9f41ef7c-82fa-42a7-9a30-49a93e2c14d0",
+      "webhookUsed": "false",
+      "webhookForSlotFillingUsed": "false",
+      "intentName": "greetings"
+    },
+    "fulfillment": {
+      "speech": "Hi Sam! Nice to meet you!",
+      "messages": [
+        {
+          "type": 0,
+          "speech": "Hi Sam! Nice to meet you!"
+        }
+      ]
+    },
+    "score": 1
+  },
+  "status": {
+    "code": 200,
+    "errorType": "success"
+  },
+  "sessionId": "4b6a6779-b8ea-4094-b2ed-a302ba201815"
+}"#;
+
+    let msg : ApiResponse = serde_json::from_str(&json_string).unwrap();
+
+    assert_eq!(msg.status.code, 200);
+    assert_eq!(msg.session_id, String::from("4b6a6779-b8ea-4094-b2ed-a302ba201815"));
+    assert_eq!(msg.result.score, 1.0);
+    assert_eq!(msg.result.fulfillment.speech, String::from("Hi Sam! Nice to meet you!"));
+
+}
 
 
+#[test]
+fn test_serialize_api_response(){
+    let status = ApiStatus{
+        code: 200,
+        error_type: String::from("success"),
+        error_details: Option::None
+    };
+
+    let msg = ApiMessage::new_text(String::from("Hi Sam! Nice to meet you!"));
+
+    let fulfillment = ApiFulfillment {
+        speech: String::from("Hi Sam! Nice to meet you!"),
+        messages: vec!(msg)
+    };
+
+    let metadata = ApiMetadata{
+        intent_id: String::from("9f41ef7c-82fa-42a7-9a30-49a93e2c14d0"),
+        webhook_used: String::from("false"),
+        webhook_slotfilling_used: String::from("false"),
+        intent_name: String::from("greetings")
+    };
+
+    let result = ApiResult{
+        source: String::from("agent"),
+        resolved_query: String::from("My name is Sam and I live in Paris"),
+        action: String::from("greetings"),
+        action_incomplete: false,
+        parameters: HashMap::new(),
+        contexts: Vec::new(),
+        metadata: metadata,
+        fulfillment: fulfillment,
+        score: 1.0,
+    };
+
+    let response = ApiResponse{
+        id: String::from("b340a1f7-abee-4e13-9bdd-5e8938a48b7d"),
+        timestamp: String::from("2017-02-09T15:38:26.548Z"),
+        lang: Language::English,
+        result: result,
+        status: status,
+        session_id: String::from("4b6a6779-b8ea-4094-b2ed-a302ba201815")
+    };
+
+    let ideal_output = r#"{"id":"b340a1f7-abee-4e13-9bdd-5e8938a48b7d","timestamp":"2017-02-09T15:38:26.548Z","lang":"en","result":{"source":"agent","resolvedQuery":"My name is Sam and I live in Paris","action":"greetings","actionIncomplete":false,"parameters":{},"contexts":[],"metadata":{"intentId":"9f41ef7c-82fa-42a7-9a30-49a93e2c14d0","webhookUsed":"false","webhookForSlotFillingUsed":"false","intentName":"greetings"},"fulfillment":{"speech":"Hi Sam! Nice to meet you!","messages":[{"speech":"Hi Sam! Nice to meet you!","type":0}]},"score":1.0},"status":{"code":200,"errorType":"success"},"sessionId":"4b6a6779-b8ea-4094-b2ed-a302ba201815"}"#;
+
+    //println!("{}", serde_json::to_string(&response).unwrap());
+    assert_eq!(ideal_output, serde_json::to_string(&response).unwrap())
 }
